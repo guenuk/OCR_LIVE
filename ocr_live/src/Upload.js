@@ -37,9 +37,18 @@ class Upload extends React.Component {
         files: "",
         Invoice : "",
         Amount: "",
-        Date: "", 
+        InvoiceDate: "", 
         Vendor: "",
         Description : ""
+    }
+    handleChange(event) {
+        event.preventDefault();
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({name: value});
+
     }
     async handleSubmit(event){
         event.preventDefault();
@@ -68,6 +77,29 @@ class Upload extends React.Component {
             body: JSON.stringify(data)
         }
     );
+    
+    let targetImage = UID + ".png";
+    const response = await fetch(
+        "https://mzku1bgu21.execute-api.ap-northeast-2.amazonaws.com/Production/ocr",
+        
+        {
+            method: "POST",
+            headers:{
+                Accept: "applications/json",
+                "Content-Type": "application.json"
+            },
+            body: JSON.stringify(targetImage)
+        }
+    );
+
+    const OCRBODY = await response.json(); 
+    console.log("OCRBODY", OCRBODY);
+    console.log(OCRBODY.body[0]);
+
+    this.setState({Amount: OCRBODY.body[0]})
+    this.setState({Invoice: OCRBODY.body[1]})
+    this.setState({InvoiceDate: OCRBODY.body[2]})
+
     }
     
     render() { 
@@ -101,6 +133,7 @@ class Upload extends React.Component {
                                 id = "Invoice"
                                 required
                                 value = {this.state.Invoice}
+                                onChange={this.handleChange}
                             />
                         </FormGroup>
 
@@ -114,6 +147,7 @@ class Upload extends React.Component {
                                 id = "Amount"
                                 required
                                 value = {this.state.Amount}
+                                onChange={this.handleChange}
                             />
                         </FormGroup>
 
@@ -126,7 +160,8 @@ class Upload extends React.Component {
                                 name = "Date"
                                 id = "Date"
                                 required
-                                value = {this.state.Date}
+                                value = {this.state.InvoiceDate}
+                                onChange={this.handleChange}
                             />
                         </FormGroup>
 
@@ -141,6 +176,7 @@ class Upload extends React.Component {
                                 id = "Vendor"
                                 required
                                 value = {this.state.Vendor}
+                                onChange={this.handleChange}
                             />
                         </FormGroup>
 
@@ -154,6 +190,7 @@ class Upload extends React.Component {
                                 id = "Description"
                                 required
                                 value = {this.state.Description}
+                                onChange={this.handleChange}
                             />
                         </FormGroup>
                         <Button className= "btn btn-lg btn-block  btn-success">
