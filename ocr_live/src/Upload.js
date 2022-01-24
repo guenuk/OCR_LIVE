@@ -66,6 +66,7 @@ class Upload extends React.Component {
         folder: UID,
         img: this.state.files[0].base64
     };
+    this.setState({confirmation: "Processing..."})
     await fetch(
         "https://mzku1bgu21.execute-api.ap-northeast-2.amazonaws.com/Production",
         {
@@ -91,7 +92,7 @@ class Upload extends React.Component {
             body: JSON.stringify(targetImage)
         }
     );
-
+    this.setState({confirmation: ""})
     const OCRBODY = await response.json(); 
     console.log("OCRBODY", OCRBODY);
     console.log(OCRBODY.body[0]);
@@ -103,7 +104,7 @@ class Upload extends React.Component {
     }
     
     render() { 
-        const processing = "Processing document... ";
+        const processing = this.state.confirmation;
         return (
             <div className= "row">
                 <div className= "col-6 offset-3">
